@@ -10,3 +10,4 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 Route::apiResource('animals', AnimalController::class);
 Route::apiResource('stores', EstoqueController::class);
+Route::apiResource('users', EstoqueController::class);

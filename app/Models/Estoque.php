@@ -21,4 +21,11 @@ class Estoque extends Model
         'created_at',
         'updated_at',
     ];
+
+    // "Join" com a table StockCategory.
+    public function stockCategory()
+    {
+        return $this->belongsTo(StockCategory::class, 'category', 'id')
+                    ->select(['id', 'name']); // colunas id e name, utilizar para puxar somente colunas que quiser.
+    }
 }

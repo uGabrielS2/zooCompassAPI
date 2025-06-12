@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Estoque;
-use App\Http\Controllers\Controller;
+use App\Models\StockCategory;
 
 class EstoqueController extends Controller
 {
-
     public function index()
     {
         return Estoque::with('stockCategory')->get();
@@ -21,13 +20,26 @@ class EstoqueController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('Payload recebido em store:', $request->all());
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'amount' => 'required|integer',
-            'category' => 'required|integer', // chave etrangeira do stock_category
+            'name'     => 'required|string|max:255',
+            'amount'   => 'required|integer',
+            'category' => 'required|string', // Recebendo como nome
         ]);
 
-        $estoque = Estoque::create($request->all());
+        // Buscar o ID da categoria pelo nome
+        $cat = StockCategory::where('name', $request->category)->firstOrFail();
+
+        $data = [
+            'name'     => $request->name,
+            'amount'   => $request->amount,
+            'category' => $cat->id, // Agora com ID
+        ];
+
+        \Log::info('Dados mapeados para salvar:', $data);
+
+        $estoque = Estoque::create($data);
 
         return response()->json($estoque->load('stockCategory'), 201);
     }
@@ -37,12 +49,17 @@ class EstoqueController extends Controller
         $estoque = Estoque::findOrFail($id);
 
         $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'amount' => 'sometimes|required|integer',
-            'category' => 'sometimes|required|integer',
+            'name'     => 'sometimes|required|string|max:255',
+            'amount'   => 'sometimes|required|integer',
+            'category' => 'sometimes|required|string',
         ]);
 
-        $estoque->update($request->all());
+        if ($request->filled('category')) {
+            $cat = StockCategory::where('name', $request->category)->firstOrFail();
+            $request->merge(['category' => $cat->id]);
+        }
+
+        $estoque->update($request->only('name', 'amount', 'category'));
 
         return response()->json($estoque->load('stockCategory'), 200);
     }

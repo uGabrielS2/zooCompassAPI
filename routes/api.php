@@ -12,8 +12,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+<<<<<<< HEAD
 //Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+=======
+Route::post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->group(function () {
+    
+>>>>>>> ba6f3a070c62a7c35fcb585a80bb83cf2d795c34
     Route::apiResource('animals', AnimalController::class);
     Route::apiResource('stores', EstoqueController::class);
     Route::apiResource('users', EstoqueController::class);
@@ -21,4 +27,8 @@ Route::post('/login', [AuthController::class, 'login']);
     Route::get('/user', function (Request $request) {
         return response()->json($request->user());
     });
+<<<<<<< HEAD
 //});
+=======
+});
+>>>>>>> ba6f3a070c62a7c35fcb585a80bb83cf2d795c34

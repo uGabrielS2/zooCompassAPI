@@ -22,7 +22,7 @@ class EstoqueController extends Controller
     {
         \Log::info('Payload recebido em store:', $request->all());
 
-        // Buscar o ID da categoria pelo nome, se possível
+        // pegar o ID da categoria pelo nome, se possível
         $cat = StockCategory::where('name', $request->category)->first();
 
         $data = [

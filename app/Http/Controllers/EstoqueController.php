@@ -22,19 +22,13 @@ class EstoqueController extends Controller
     {
         \Log::info('Payload recebido em store:', $request->all());
 
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'amount'   => 'required|integer',
-            'category' => 'required|string', // Recebendo como nome
-        ]);
-
-        // Buscar o ID da categoria pelo nome
-        $cat = StockCategory::where('name', $request->category)->firstOrFail();
+        // Buscar o ID da categoria pelo nome, se possível
+        $cat = StockCategory::where('name', $request->category)->first();
 
         $data = [
             'name'     => $request->name,
             'amount'   => $request->amount,
-            'category' => $cat->id, // Agora com ID
+            'category' => $cat ? $cat->id : null,
         ];
 
         \Log::info('Dados mapeados para salvar:', $data);
@@ -48,15 +42,13 @@ class EstoqueController extends Controller
     {
         $estoque = Estoque::findOrFail($id);
 
-        $request->validate([
-            'name'     => 'sometimes|required|string|max:255',
-            'amount'   => 'sometimes|required|integer',
-            'category' => 'sometimes|required|string',
-        ]);
-
         if ($request->filled('category')) {
-            $cat = StockCategory::where('name', $request->category)->firstOrFail();
-            $request->merge(['category' => $cat->id]);
+            $cat = StockCategory::where('name', $request->category)->first();
+            if ($cat) {
+                $request->merge(['category' => $cat->id]);
+            } else {
+                $request->merge(['category' => null]);
+            }
         }
 
         $estoque->update($request->only('name', 'amount', 'category'));

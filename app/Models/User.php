@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Models;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;  // Adiciona o trait do Sanctum
+// ou
+// use Laravel\Passport\HasApiTokens;  // Se estiver usando Passport, descomente esta linha
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;  // Adiciona o HasApiTokens aqui
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +34,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
      * @return array<string, string>
      */
